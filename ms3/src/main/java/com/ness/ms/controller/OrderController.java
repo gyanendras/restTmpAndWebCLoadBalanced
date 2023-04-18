@@ -115,7 +115,7 @@ public class OrderController {
 		logger.debug("Rest loadbalanced order creation-6 "+prd);
 		String url = "http://ORDERAPP/order/"+id;
 		
-		return restTemplate.getForObject(url, Order.class);
+		return restTemplate.getForObject(url, Order.class); 
 	}
 	
 	@GetMapping("/order/5")
