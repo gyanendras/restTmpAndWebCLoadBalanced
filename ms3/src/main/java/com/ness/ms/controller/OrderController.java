@@ -23,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.ness.ms.domain.Order;
+import com.ness.ms.domain.Product;
+import com.ness.ms.integ.ProductServiceConsumer;
 import com.ness.ms.service.OrderService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +45,9 @@ public class OrderController {
 	@Autowired
 	private WebClient webClient;
 	
+	@Autowired
+	private ProductServiceConsumer psr;
+	
 	@Value("${server.port}")
 	String port;
 	
@@ -54,29 +59,37 @@ public class OrderController {
 	
 	@GetMapping("/deforder")
 	Order getDefaultOrder(){
-		logger.debug("Default order to be created");
+		logger.debug("Default order to be created-1");
+		return orderService.getDefaultOrder();
+	}
+	
+	@GetMapping("/get-details")
+	Order getDefaultOrder2(){
+		logger.debug("Default order to be created-2");
 		return orderService.getDefaultOrder();
 	}
 	
 	@GetMapping("/order/{id}")
 	Order getOrder(@PathVariable Long id){
-		logger.debug("Default order to be created");
+		logger.debug("Default order to be created-3");
 		return orderService.getOrder(id);
 	}
 	
 	@PostMapping("/order")
 	Order createUpdOrder(@RequestBody Order order) {
+		logger.debug("Creating order created-4");
 		return orderService.createOrder(order);
 	}
 	
 	@DeleteMapping("/order")
 	void deleteOrder(@RequestBody Order order) throws Exception {
+		logger.debug("Removing order");
 		orderService.removeOrder(order);
 	}
 	
 	@GetMapping("/order/2/{id}")
 	Order getOrder2(@PathVariable Long id){
-		logger.debug("Default order to be created");
+		logger.debug("Resttemplate order to be created");
 		
 		HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -97,13 +110,18 @@ public class OrderController {
 	
 	@GetMapping("/order/3/{id}")
 	Order getOrder3(@PathVariable Long id) {
+		
+		Product prd = psr.getPrd(id);
+		logger.debug("Rest loadbalanced order creation-6 "+prd);
 		String url = "http://ORDERAPP/order/"+id;
+		
 		return restTemplate.getForObject(url, Order.class);
 	}
 	
 	@GetMapping("/order/5")
 	String getOrder5() {
 		String url = "http://ORDERAPP/order/info";
+		
 		return restTemplate.getForObject(url, String.class);
 	}
 	
@@ -111,7 +129,7 @@ public class OrderController {
 	Order getOrder4(@PathVariable Long id) {
 		String url = "http://localhost:8765/order/"+id;
 		Mono<Order> morder = webClient.get().uri(url).retrieve().bodyToMono(Order.class);
-		return morder.block();
+		 return morder.block();
 	}
 	
 	@GetMapping("/order/4/info")

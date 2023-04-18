@@ -3,6 +3,7 @@ package com.ness.ms.config;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.ness.ms.domain.Order;
+
+import feign.Capability;
+import feign.micrometer.MicrometerCapability;
+import io.micrometer.core.instrument.MeterRegistry;
+
+
 
 @Configuration
 public class BeanConfiguration {
@@ -42,14 +49,19 @@ public class BeanConfiguration {
 	
 	@LoadBalanced
 	@Bean
-	public RestTemplate restTemplate() {
-	    return new RestTemplate();
+	RestTemplate restTemplate(RestTemplateBuilder rtb) {
+	    return rtb.build();
 	}
 	
 	
 	@LoadBalanced
 	@Bean
-	public WebClient webcl() {
+	WebClient webcl() {
 	    return WebClient.create();
+	}
+	 
+	@Bean
+	public Capability capability(final MeterRegistry registry) {
+	    return new MicrometerCapability(registry);
 	}
 }
