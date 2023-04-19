@@ -1,0 +1,21 @@
+version: '3.3'
+services: 
+ ecom-mysql: 
+  image: mysql:8.0.33 
+  ports: 
+   - "3307:3306" 
+  environment: 
+   - MYSQL_ROOT_PASSWORD=full2work 
+  volumes: 
+   - E:/ecomdbdb:/var/lib/mysql 
+  
+ 
+ myweb-service: 
+  image: ms3-app 
+  build: ms3/. 
+  ports: 
+   - "8096:8094" 
+  depends_on: 
+   - ecom-mysql 
+  links: 
+   - ecom-mysql 
