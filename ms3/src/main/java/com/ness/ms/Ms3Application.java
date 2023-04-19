@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+
 @ComponentScan(basePackages = {"com.ness.ms", "com.ms", "com.newcom"})
 public class Ms3Application {
 
