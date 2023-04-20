@@ -122,8 +122,8 @@ public class OrderController {
 		boolean excep = true;
 		// Product prd = psr.getPrd(id);
 		// logger.debug("Rest loadbalanced order creation-6 "+prd);
-		String url = "http://ORAPP/order/" + id;
-		//if (excep) throw new RuntimeException();
+		String url = "http://ORDERAPP/order/" + id;
+		if (excep) throw new Exception("Deliberate Exception");
 		return restTemplate.getForObject(url, Order.class);
 	}
 
@@ -136,7 +136,7 @@ public class OrderController {
 		return circuitBreakerFactory.create("info").run(() -> restTemplate.getForObject(url, String.class),
 
 				throwable -> {
-					return "fallback";
+					return "fallback " + throwable.getMessage();
 				});
 
 	}
@@ -163,7 +163,7 @@ public class OrderController {
 	
 	Order OrderFallBack(@PathVariable Long p, Exception e) {
 		Order order = new Order();
-		order.setStatus("Fallback"+p);
+		order.setStatus("Fallback "+p+" "+e.getMessage());
 		return order;
 	}
 
